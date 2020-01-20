@@ -1,6 +1,7 @@
 import getpass
 import pickle
 import sys
+import random
 
 def get_credentials():
     username = input('Enter your username: ')
@@ -14,7 +15,8 @@ def hash_string(inputstring):
     
 def authenticate(username, password, pwdb):
     if username in pwdb:
-        if password == pwdb[username]:
+        salt, salted_password = pwdb[username]
+        if hash_string(str(password+salt)) == salted_password:
             return True
     return False
 
@@ -28,8 +30,12 @@ def write_pwdb(pwdb, pwdb_file):
     pickle.dump(pwdb, pwdb_file)
 
 def add_user(username, password, pwdb):
-    pwdb[username] = password
+    salt = get_salt()
+    pwdb[username] = (salt, hash_string(str(password+salt)))
     return pwdb
+
+def get_salt():
+    return random.randint(0, 100000000)
 
 if __name__ == '__main__':
     DEFAULT_PWDB = 'pwdb.pkl'
