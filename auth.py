@@ -9,7 +9,7 @@ def get_credentials():
 
 def authenticate(username, password, pwdb):
     if username in pwdb:
-        if hash(password) == pwdb[username]:
+        if pwhash(password) == pwdb[username]:
             return True
     return False
 
@@ -23,10 +23,10 @@ def write_pwdb(pwdb, pwdb_file):
     pickle.dump(pwdb, pwdb_file)
 
 def add_user(username, password, pwdb):
-    pwdb[username] = hash(password)
+    pwdb[username] = pwhash(password)
     return pwdb
 
-def hash(password):
+def pwhash(password):
     return ''.join([str(ord(c)) for c in password])
 
 
@@ -47,7 +47,7 @@ if __name__ == '__main__':
     pwdb = read_pwdb(pwdb_file)
 
     if authenticate(username, password, pwdb):
-        print('Successfull authentication', username, hash(password))
+        print('Successfull authentication', username, pwhash(password))
     else:
         ans = input('User not known or password is wrong. Do you want to add the '
                     'user to the password database? [y/n]')
